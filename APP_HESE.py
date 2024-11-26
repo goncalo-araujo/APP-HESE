@@ -6,8 +6,6 @@
 
 import streamlit as st
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 
 # Streamlit UI
@@ -311,10 +309,10 @@ if uploaded_file:
 
 
 
-# In[ ]:
+# In[30]:
 
 
-get_ipython().system('streamlit run APP_HESE.py --server.headless true')
+#!streamlit run APP_HESE.py --server.headless true
 
 
 # In[ ]:
