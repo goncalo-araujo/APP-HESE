@@ -140,7 +140,7 @@ if uploaded_file:
 
     # Define chart types, variables, and color palettes
     chart_types = ["Violin Plot", "Box Plot", "Pie Chart", "Stacked Horizontal Bar Chart", "Stacked Vertical Bar Chart"]
-    variables = ["Idade", "Sexo", "Localização Anatómica", "Proveniência", "ASA Score", "Via de Acesso"]
+    variables = ["Idade", "Sexo", "Localização Anatómica", "Proveniência", "ASA Score", "Via de Acesso", "1º Ajudante"]
     color_palettes = {
         "Default": None,
         "Viridis": px.colors.sequential.Viridis,
