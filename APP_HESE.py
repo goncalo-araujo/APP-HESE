@@ -22,17 +22,23 @@ uploaded_file =  st.file_uploader("Upload a CSV file", type=["csv"], )
 
 if uploaded_file:
     # Load data
-    df = pd.read_csv(uploaded_file, delimiter=';')  # Adjust delimiter if needed
-    df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
-    df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
-    df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
-    df_certificado = pd.concat([df['Data da Cirurgia'], 
-                         df['Nº Processo'],
-                         df['ID do doente'],
-                         df['1º Ajudante'], 
-                         df['Diagnóstico'],
-                         df['Cirurgia'],
-                         df['Localização Anatómica']], axis=1)
+# Example of handling multiple delimiters
+uploaded_file_content = uploaded_file.read().decode("utf-8")  # Decode if it's a file-like object
+processed_content = re.sub(r'[;,|]', ',', uploaded_file_content)  # Replace multiple delimiters with a single one
+
+# Convert processed content back to a DataFrame
+from io import StringIO
+df = pd.read_csv(StringIO(processed_content))    
+df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
+df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
+df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
+df_certificado = pd.concat([df['Data da Cirurgia'], 
+                     df['Nº Processo'],
+                     df['ID do doente'],
+                     df['1º Ajudante'], 
+                     df['Diagnóstico'],
+                     df['Cirurgia'],
+                     df['Localização Anatómica']], axis=1)
 
 
 # In[16]:
