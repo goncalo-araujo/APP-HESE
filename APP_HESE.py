@@ -21,8 +21,10 @@ uploaded_file =  st.file_uploader("Upload an Excel file")
 
 
 def correct_electiva(prov_str):
-    if "Eletiva" in prov_str:
+    if "Electiva" in prov_str:
         return "Electiva"
+    else:
+        return prov_str
 
 if uploaded_file:
 # Read the uploaded file and add certification formats
