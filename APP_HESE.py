@@ -128,10 +128,11 @@ st.write('---')
 # In[ ]:
 
 
-# Main Streamlit logic
 import plotly.express as px
 
+# Main Streamlit logic
 if uploaded_file:
+
     # Section: Dynamic Chart Selection
     st.write("### Dynamic Chart Creation")
 
@@ -235,23 +236,23 @@ if uploaded_file:
                 st.session_state.charts.pop(i)
                 st.experimental_rerun()
 
-    # Generate and display the charts
+        # Generate and display the charts
     st.write("### Generated Charts")
     for chart_config in st.session_state.charts:
         if chart_config["type"] and chart_config["x_variable"]:
             st.write(f"**Chart: {chart_config['type']}**")
-
+    
             # Get the selected color palette
             color_palette = color_palettes[chart_config["color_palette"]]
-
+    
             # Generate the respective chart
             if chart_config["type"] == "Violin Plot":
                 fig = px.violin(
                     df[df['Idade'] < 120],
                     x=chart_config["x_variable"],
                     y=chart_config["y_variable"],
-                    color=chart_config["hue_variable"],
-                    color_discrete_sequence=color_palette,
+                    color=chart_config["hue_variable"],  # Use hue if provided
+                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     box=True,
                     points="all",
                     title=f"Violin Plot of {chart_config['y_variable']} vs {chart_config['x_variable']}"
@@ -261,16 +262,15 @@ if uploaded_file:
                     df[df['Idade'] < 120],
                     x=chart_config["x_variable"],
                     y=chart_config["y_variable"],
-                    color=chart_config["hue_variable"],
-                    color_discrete_sequence=color_palette,
+                    color=chart_config["hue_variable"],  # Use hue if provided
+                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     title=f"Box Plot of {chart_config['y_variable']} vs {chart_config['x_variable']}"
                 )
             elif chart_config["type"] == "Pie Chart":
                 fig = px.pie(
                     df[df['Idade'] < 120],
                     names=chart_config["x_variable"],
-                    color=chart_config["hue_variable"],
-                    color_discrete_sequence=color_palette,
+                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     title=f"Pie Chart of {chart_config['x_variable']}"
                 )
             elif chart_config["type"] == "Stacked Horizontal Bar Chart":
@@ -279,8 +279,8 @@ if uploaded_file:
                     data,
                     x="count",
                     y=chart_config["x_variable"],
-                    color=chart_config["hue_variable"],
-                    color_discrete_sequence=color_palette,
+                    color=chart_config["hue_variable"],  # Use hue if provided
+                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     orientation="h",
                     title=f"Stacked Horizontal Bar Chart of {chart_config['x_variable']} and {chart_config['hue_variable']}"
                 )
@@ -290,8 +290,8 @@ if uploaded_file:
                     data,
                     x=chart_config["x_variable"],
                     y="count",
-                    color=chart_config["hue_variable"],
-                    color_discrete_sequence=color_palette,
+                    color=chart_config["hue_variable"],  # Use hue if provided
+                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     title=f"Stacked Vertical Bar Chart of {chart_config['x_variable']} and {chart_config['hue_variable']}"
                 )
             elif chart_config["type"] == "Simple Horizontal Bar Chart":
@@ -301,6 +301,7 @@ if uploaded_file:
                     data,
                     x="count",
                     y=chart_config["x_variable"],
+                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     orientation="h",
                     title=f"Simple Horizontal Bar Chart of {chart_config['x_variable']}"
                 )
@@ -311,9 +312,10 @@ if uploaded_file:
                     data,
                     x=chart_config["x_variable"],
                     y="count",
+                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     title=f"Simple Vertical Bar Chart of {chart_config['x_variable']}"
                 )
-
+    
             # Update font size for labels, axes, and tickers
             fig.update_layout(
                 font=dict(size=chart_config["font_size"]),  # General font size
@@ -328,7 +330,7 @@ if uploaded_file:
                 },
                 legend={"font": {"size": chart_config["font_size"]}},  # Legend font size
             )
-
+    
             # Display the chart
             st.plotly_chart(fig, use_container_width=True)
 
