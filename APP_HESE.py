@@ -249,7 +249,7 @@ if uploaded_file:
             # Generate the respective chart
             if chart_config["type"] == "Violin Plot":
                 fig = px.violin(
-                    df[df['Idade'] < 120],
+                    filtered_df[filtered_df['Idade'] < 120],
                     x=chart_config["x_variable"],
                     y=chart_config["y_variable"],
                     color=chart_config["hue_variable"],  # Use hue if provided
@@ -260,7 +260,7 @@ if uploaded_file:
                 )
             elif chart_config["type"] == "Box Plot":
                 fig = px.box(
-                    df[df['Idade'] < 120],
+                    filtered_df[filtered_df['Idade'] < 120],
                     x=chart_config["x_variable"],
                     y=chart_config["y_variable"],
                     color=chart_config["hue_variable"],  # Use hue if provided
@@ -269,13 +269,13 @@ if uploaded_file:
                 )
             elif chart_config["type"] == "Pie Chart":
                 fig = px.pie(
-                    df[df['Idade'] < 120],
+                    filtered_df[filtered_df['Idade'] < 120],
                     names=chart_config["x_variable"],
                     color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     title=f"Pie Chart of {chart_config['x_variable']}"
                 )
             elif chart_config["type"] == "Stacked Horizontal Bar Chart":
-                data = df[df['Idade'] < 120].groupby([chart_config["x_variable"], chart_config["hue_variable"]]).size().reset_index(name='count')
+                data = filtered_df[filtered_df['Idade'] < 120].groupby([chart_config["x_variable"], chart_config["hue_variable"]]).size().reset_index(name='count')
                 fig = px.bar(
                     data,
                     x="count",
@@ -286,7 +286,7 @@ if uploaded_file:
                     title=f"Stacked Horizontal Bar Chart of {chart_config['x_variable']} and {chart_config['hue_variable']}"
                 )
             elif chart_config["type"] == "Stacked Vertical Bar Chart":
-                data = df[df['Idade'] < 120].groupby([chart_config["x_variable"], chart_config["hue_variable"]]).size().reset_index(name='count')
+                data = filtered_df[filtered_df['Idade'] < 120].groupby([chart_config["x_variable"], chart_config["hue_variable"]]).size().reset_index(name='count')
                 fig = px.bar(
                     data,
                     x=chart_config["x_variable"],
@@ -296,7 +296,7 @@ if uploaded_file:
                     title=f"Stacked Vertical Bar Chart of {chart_config['x_variable']} and {chart_config['hue_variable']}"
                 )
             elif chart_config["type"] == "Simple Horizontal Bar Chart":
-                data = df[df['Idade'] < 120][chart_config["x_variable"]].value_counts().reset_index()
+                data = filtered_df[filtered_df['Idade'] < 120][chart_config["x_variable"]].value_counts().reset_index()
                 data.columns = [chart_config["x_variable"], "count"]
                 fig = px.bar(
                     data,
@@ -307,7 +307,7 @@ if uploaded_file:
                     title=f"Simple Horizontal Bar Chart of {chart_config['x_variable']}"
                 )
             elif chart_config["type"] == "Simple Vertical Bar Chart":
-                data = df[df['Idade'] < 120][chart_config["x_variable"]].value_counts().reset_index()
+                data = filtered_df[filtered_df['Idade'] < 120][chart_config["x_variable"]].value_counts().reset_index()
                 data.columns = [chart_config["x_variable"], "count"]
                 fig = px.bar(
                     data,
@@ -336,10 +336,49 @@ if uploaded_file:
             st.plotly_chart(fig, use_container_width=True)
 
 
+# In[ ]:
 
 
 
 
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+#!streamlit run APP_HESE.py --server.headless true
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
 
 
 
