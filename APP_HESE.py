@@ -21,14 +21,10 @@ uploaded_file =  st.file_uploader("Upload a CSV file", type=["csv"], )
 
 
 if uploaded_file:
-# Read the uploaded file
-    # Detect the delimiter using the csv module
-    sample = uploaded_file.read(1024).decode('utf-8')  # Read a sample and decode as UTF-8
-    uploaded_file.seek(0)  # Reset the file pointer to the beginning after reading the sample
-    detected_delimiter = csv.Sniffer().sniff(sample).delimiter
+# Read the uploaded file and add certification formats
 
     # Load the CSV using the detected delimiter and UTF-8 encoding
-    df = pd.read_csv(uploaded_file, delimiter=detected_delimiter, encoding='utf-8')   
+    df = pd.read_csv(uploaded_file, delimiter=',', encoding='utf-8')   
     df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
