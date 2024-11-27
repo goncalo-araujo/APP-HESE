@@ -7,7 +7,7 @@
 import streamlit as st
 import pandas as pd
 import re
-
+import csv
 # Streamlit UI
 st.title("Surgeries Data Visualization App")
 st.write("Upload your surgeries CSV file, format the data, and visualize key insights.")
@@ -22,8 +22,13 @@ uploaded_file =  st.file_uploader("Upload a CSV file", type=["csv"], )
 
 if uploaded_file:
     # Load data
-    df = pd.read_csv(uploaded_file, delimiter=r'[;,|]', engine='python')  # Regex for delimiters    
-    df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
+    # Detect the delimiter using the csv module
+    with open(uploaded_file.name, 'r', encoding='utf-8') as f:  # Explicitly read as UTF-8
+        sample = f.read(1024)  # Read a sample of the file
+        detected_delimiter = csv.Sniffer().sniff(sample).delimiter
+    
+    # Load the CSV using the detected delimiter and UTF-8 encoding
+    df = pd.read_csv(uploaded_file, delimiter=detected_delimiter, encoding='utf-8')    df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
     df_certificado = pd.concat([df['Data da Cirurgia'], 
