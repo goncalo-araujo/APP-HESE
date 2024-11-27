@@ -140,6 +140,8 @@ st.write('---')
 
 
 import plotly.express as px
+import plotly.graph_objects as go
+
 
 # Main Streamlit logic
 if uploaded_file:
@@ -160,6 +162,7 @@ if uploaded_file:
         "Stacked Vertical Bar Chart",
         "Simple Horizontal Bar Chart",
         "Simple Vertical Bar Chart",
+        "Sankey Diagram",  # Added Sankey Diagram to the list
     ]
     variables = ["Idade", "Sexo", "Localização Anatómica", "Proveniência", "ASA Score", "Via de Acesso", "1º Ajudante", "Diagnóstico", "Cirurgia"]
     color_palettes = {
@@ -247,22 +250,22 @@ if uploaded_file:
                 st.session_state.charts.pop(i)
                 st.experimental_rerun()
 
-        # Generate and display the charts
+    # Display generated charts for each configuration
     st.write("### Generated Charts")
     for chart_config in st.session_state.charts:
         if chart_config["type"] and chart_config["x_variable"]:
             st.write(f"**Chart: {chart_config['type']}**")
-    
+        
             # Get the selected color palette
             color_palette = color_palettes[chart_config["color_palette"]]
-    
+        
             # Generate the respective chart
             if chart_config["type"] == "Violin Plot":
                 fig = px.violin(
                     filtered_df[filtered_df['Idade'] < 120],
                     x=chart_config["x_variable"],
                     y=chart_config["y_variable"],
-                    color=chart_config["hue_variable"],  # Use hue if provided
+                    color=chart_config["hue_variable"],
                     color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     box=True,
                     points="all",
@@ -273,7 +276,7 @@ if uploaded_file:
                     filtered_df[filtered_df['Idade'] < 120],
                     x=chart_config["x_variable"],
                     y=chart_config["y_variable"],
-                    color=chart_config["hue_variable"],  # Use hue if provided
+                    color=chart_config["hue_variable"],
                     color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     title=f"Box Plot of {chart_config['y_variable']} vs {chart_config['x_variable']}"
                 )
@@ -290,31 +293,10 @@ if uploaded_file:
                     data,
                     x="count",
                     y=chart_config["x_variable"],
-                    color=chart_config["hue_variable"],  # Use hue if provided
+                    color=chart_config["hue_variable"],
                     color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     orientation="h",
                     title=f"Stacked Horizontal Bar Chart of {chart_config['x_variable']} and {chart_config['hue_variable']}"
-                )
-            elif chart_config["type"] == "Stacked Vertical Bar Chart":
-                data = filtered_df[filtered_df['Idade'] < 120].groupby([chart_config["x_variable"], chart_config["hue_variable"]]).size().reset_index(name='count')
-                fig = px.bar(
-                    data,
-                    x=chart_config["x_variable"],
-                    y="count",
-                    color=chart_config["hue_variable"],  # Use hue if provided
-                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
-                    title=f"Stacked Vertical Bar Chart of {chart_config['x_variable']} and {chart_config['hue_variable']}"
-                )
-            elif chart_config["type"] == "Simple Horizontal Bar Chart":
-                data = filtered_df[filtered_df['Idade'] < 120][chart_config["x_variable"]].value_counts().reset_index()
-                data.columns = [chart_config["x_variable"], "count"]
-                fig = px.bar(
-                    data,
-                    x="count",
-                    y=chart_config["x_variable"],
-                    color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
-                    orientation="h",
-                    title=f"Simple Horizontal Bar Chart of {chart_config['x_variable']}"
                 )
             elif chart_config["type"] == "Simple Vertical Bar Chart":
                 data = filtered_df[filtered_df['Idade'] < 120][chart_config["x_variable"]].value_counts().reset_index()
@@ -326,20 +308,78 @@ if uploaded_file:
                     color_discrete_sequence=color_palette if color_palette else px.colors.qualitative.Plotly,
                     title=f"Simple Vertical Bar Chart of {chart_config['x_variable']}"
                 )
+            elif chart_config["type"] == "Sankey Diagram":
+                # Initialize layer configuration for Sankey diagram
+                if f"sankey_layers_{chart_config['type']}" not in st.session_state:
+                    st.session_state[f"sankey_layers_{chart_config['type']}"] = [None, None]  # Start with two layers
+                
+                # Display layers and allow adding/removing
+                st.write(f"**Layers for Sankey Diagram {chart_config['type']}**")
+                for layer_idx, layer_name in enumerate(st.session_state[f"sankey_layers_{chart_config['type']}"]):
+                    col1, col2 = st.columns([4, 1])  # Split layout for dropdown and remove button
+                    with col1:
+                        st.session_state[f"sankey_layers_{chart_config['type']}"][layer_idx] = st.selectbox(
+                            f"Layer {layer_idx + 1}:",
+                            variables,
+                            key=f"sankey_layer_{chart_config['type']}_{layer_idx}"
+                        )
+                    with col2:
+                        if st.button(f"Remove Layer {layer_idx + 1}", key=f"remove_layer_{chart_config['type']}_{layer_idx}"):
+                            st.session_state[f"sankey_layers_{chart_config['type']}"].pop(layer_idx)
+                            st.experimental_rerun()  # Refresh UI immediately after removal
+    
+                # Add a new layer button
+                if st.button(f"Add Layer to Sankey {chart_config['type']}"):
+                    st.session_state[f"sankey_layers_{chart_config['type']}"].append(None)
+    
+                # Prepare Sankey data
+                layers = [layer for layer in st.session_state[f"sankey_layers_{chart_config['type']}"] if layer]
+                if len(layers) > 1:
+                    sankey_data = filtered_df.groupby(layers).size().reset_index(name="count")
+                    all_labels = list(set().union(*[sankey_data[layer].unique() for layer in layers]))
+                    label_map = {label: idx for idx, label in enumerate(all_labels)}
+    
+                    # Create source, target, and value mappings
+                    sources = []
+                    targets = []
+                    values = []
+                    for layer_idx in range(len(layers) - 1):
+                        for _, row in sankey_data.iterrows():
+                            sources.append(label_map[row[layers[layer_idx]]])
+                            targets.append(label_map[row[layers[layer_idx + 1]]])
+                            values.append(row["count"])
+    
+                    fig = go.Figure(
+                        data=[
+                            go.Sankey(
+                                node=dict(
+                                    pad=15,
+                                    thickness=20,
+                                    line=dict(color="black", width=0.5),
+                                    label=all_labels,
+                                ),
+                                link=dict(
+                                    source=sources,
+                                    target=targets,
+                                    value=values,
+                                ),
+                            )
+                        ]
+                    )
+                    fig.update_layout(
+                        title=f"Sankey Diagram: {' -> '.join(layers)}",
+                        font=dict(size=chart_config["font_size"])
+                    )
+                else:
+                    st.write("Add at least two layers to generate the Sankey diagram.")
     
             # Update font size for labels, axes, and tickers
             fig.update_layout(
-                font=dict(size=chart_config["font_size"]),  # General font size
-                title={"font": {"size": chart_config["font_size"] + 2}},  # Slightly larger font for title
-                xaxis={
-                    "title": {"font": {"size": chart_config["font_size"]}},  # X-axis title font
-                    "tickfont": {"size": chart_config["font_size"]},  # X-axis tick labels font
-                },
-                yaxis={
-                    "title": {"font": {"size": chart_config["font_size"]}},  # Y-axis title font
-                    "tickfont": {"size": chart_config["font_size"]},  # Y-axis tick labels font
-                },
-                legend={"font": {"size": chart_config["font_size"]}},  # Legend font size
+                font=dict(size=chart_config["font_size"]),
+                title={"font": {"size": chart_config["font_size"] + 2}},
+                xaxis={"title": {"font": {"size": chart_config["font_size"]}}, "tickfont": {"size": chart_config["font_size"]}},
+                yaxis={"title": {"font": {"size": chart_config["font_size"]}}, "tickfont": {"size": chart_config["font_size"]}},
+                legend={"font": {"size": chart_config["font_size"]}},
             )
     
             # Display the chart
