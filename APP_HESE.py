@@ -63,30 +63,31 @@ if uploaded_file:
     # Ensure 'Data da Cirurgia' is in datetime format
     df_certificado['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], errors='coerce')
     
-    # Multiselect widget to select years
-    years = st.multiselect(
-        'Seleccione os anos que deseja avaliar ou corrigir:',
-        df_certificado['Data da Cirurgia'].dt.year.unique(), 
-        [2023, 2024])
+    # Assuming df_certificado['Data da Cirurgia'] is already a datetime column
+    # Create a date range input widget in Streamlit
+    start_date, end_date = st.date_input(
+        "Seleccione o intervalo de datas:",
+        [df_certificado['Data da Cirurgia'].min(), df_certificado['Data da Cirurgia'].max()]
+    )
+    
+    # Filter the DataFrame by the selected date range
+    filtered_df_certificado = df_certificado[
+        (df_certificado['Data da Cirurgia'] >= pd.to_datetime(start_date)) & 
+        (df_certificado['Data da Cirurgia'] <= pd.to_datetime(end_date))
+    ]
 
-    # Extract the year from 'Data da Cirurgia' and filter the DataFrame
-    df_certificado['Ano Cirurgia'] = df_certificado['Data da Cirurgia'].dt.year
-    filtered_df = df_certificado[df_certificado['Ano Cirurgia'].isin(years)].drop('Ano Cirurgia', axis=1)
-
+    # Filter the DataFrame by the selected date range
+    filtered_df = df[
+        (df['Data da Cirurgia'] >= pd.to_datetime(start_date)) & 
+        (df['Data da Cirurgia'] <= pd.to_datetime(end_date))
+    ]
+    
     # Display a section header
     st.write('Certificação (Conferir):')
-
+    
     # Display the filtered dataframe
-    st.dataframe(filtered_df.sort_values(['Localização Anatómica', 'Data da Cirurgia']))
+    st.dataframe(filtered_df_certificado.sort_values(['Localização Anatómica', 'Data da Cirurgia']))
 
-    # Button to perform date correction
-    if st.button('Corrigir Data'):
-        # Apply the date correction function
-        df_certificado['Data da Cirurgia Corrigida'] = df_certificado['Data da Cirurgia'].dt.strftime('%Y-%m-%d').apply(reformat_date, selected_years=years)
-        
-        # Display the dataframe with corrected dates
-        st.write("Data da Cirurgia Corrigida:")
-        st.dataframe(df_certificado)
 
     # Download button for each Localização Anatómica divided into columns
     unique_localizations = df_certificado['Localização Anatómica'].unique()
@@ -335,49 +336,10 @@ if uploaded_file:
             st.plotly_chart(fig, use_container_width=True)
 
 
-# In[ ]:
 
 
 
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[30]:
-
-
-#!streamlit run APP_HESE.py --server.headless true
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
