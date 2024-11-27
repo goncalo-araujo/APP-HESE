@@ -20,13 +20,23 @@ uploaded_file =  st.file_uploader("Upload a CSV file", type=["csv"], )
 # In[2]:
 
 
-if uploaded_file:
-        # Load data
-    # Example of handling multiple delimiters
-    uploaded_file_content = uploaded_file.read().decode("utf-8")  # Decode if it's a file-like object
-    processed_content = re.sub(r'[;,|]', ',', uploaded_file_content)  # Replace multiple delimiters with a single one
+import re
+
+# Assuming `uploaded_file` is the uploaded file
+if uploaded_file is not None:
+    # Read the content of the uploaded file
+    uploaded_file_content = uploaded_file.read()
+
+    # Decode the file content into a string
+    try:
+        uploaded_file_content = uploaded_file_content.decode("utf-8")  # Ensure it's decoded correctly
+    except UnicodeDecodeError:
+        st.error("Error decoding the uploaded file. Ensure it is in UTF-8 format.")
     
-    # Convert processed content back to a DataFrame
+    # Replace multiple delimiters (e.g., `;`, `,`, `|`) with a single delimiter `,`
+    processed_content = re.sub(r'[;,|]', ',', uploaded_file_content)
+
+    # Convert the processed content to a DataFrame
     from io import StringIO
     df = pd.read_csv(StringIO(processed_content))    
     df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
