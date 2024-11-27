@@ -13,7 +13,13 @@ st.title("Surgeries Data Visualization App")
 st.write("Upload your surgeries CSV file, format the data, and visualize key insights.")
 
 # File upload
-uploaded_file =  st.file_uploader("Upload a CSV file", type=["csv"], )
+uploaded_file =  st.file_uploader("Upload an Excel file")
+
+
+
+# In[ ]:
+
+
 
 
 
@@ -24,7 +30,7 @@ if uploaded_file:
 # Read the uploaded file and add certification formats
 
     # Load the CSV using the detected delimiter and UTF-8 encoding
-    df = pd.read_csv(uploaded_file, delimiter=',', encoding='utf-8')   
+    df = pd.read_excel(uploaded_file)   
     df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
