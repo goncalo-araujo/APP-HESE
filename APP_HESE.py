@@ -28,7 +28,7 @@ if uploaded_file:
         detected_delimiter = csv.Sniffer().sniff(sample).delimiter
     
     # Load the CSV using the detected delimiter and UTF-8 encoding
-    df = pd.read_csv(uploaded_file, delimiter=detected_delimiter, encoding='utf-8')    
+    df = pd.read_csv(uploaded_file, delimiter=',', encoding='utf-8')    
     df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
