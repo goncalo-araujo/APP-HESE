@@ -17,12 +17,6 @@ uploaded_file =  st.file_uploader("Upload an Excel file")
 
 
 
-# In[ ]:
-
-
-
-
-
 # In[2]:
 
 
@@ -134,11 +128,10 @@ st.write('---')
 # In[ ]:
 
 
+# Main Streamlit logic
 import plotly.express as px
 
-# Main Streamlit logic
 if uploaded_file:
-
     # Section: Dynamic Chart Selection
     st.write("### Dynamic Chart Creation")
 
@@ -321,8 +314,20 @@ if uploaded_file:
                     title=f"Simple Vertical Bar Chart of {chart_config['x_variable']}"
                 )
 
-            # Update font size
-            fig.update_layout(font=dict(size=chart_config["font_size"]))
+            # Update font size for labels, axes, and tickers
+            fig.update_layout(
+                font=dict(size=chart_config["font_size"]),  # General font size
+                title={"font": {"size": chart_config["font_size"] + 2}},  # Slightly larger font for title
+                xaxis={
+                    "title": {"font": {"size": chart_config["font_size"]}},  # X-axis title font
+                    "tickfont": {"size": chart_config["font_size"]},  # X-axis tick labels font
+                },
+                yaxis={
+                    "title": {"font": {"size": chart_config["font_size"]}},  # Y-axis title font
+                    "tickfont": {"size": chart_config["font_size"]},  # Y-axis tick labels font
+                },
+                legend={"font": {"size": chart_config["font_size"]}},  # Legend font size
+            )
 
             # Display the chart
             st.plotly_chart(fig, use_container_width=True)
