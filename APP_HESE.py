@@ -145,7 +145,15 @@ if uploaded_file:
         st.session_state.charts = []
 
     # Define chart types, variables, and color palettes
-    chart_types = ["Violin Plot", "Box Plot", "Pie Chart", "Stacked Horizontal Bar Chart", "Stacked Vertical Bar Chart"]
+    chart_types = [
+        "Violin Plot",
+        "Box Plot",
+        "Pie Chart",
+        "Stacked Horizontal Bar Chart",
+        "Stacked Vertical Bar Chart",
+        "Simple Horizontal Bar Chart",
+        "Simple Vertical Bar Chart",
+    ]
     variables = ["Idade", "Sexo", "Localização Anatómica", "Proveniência", "ASA Score", "Via de Acesso", "1º Ajudante"]
     color_palettes = {
         "Default": None,
@@ -155,7 +163,7 @@ if uploaded_file:
         "Pastel": px.colors.qualitative.Pastel,
         "Set1": px.colors.qualitative.Set1,
         "Dark2": px.colors.qualitative.Dark2,
-        "Bold": px.colors.qualitative.Bold
+        "Bold": px.colors.qualitative.Bold,
     }
 
     # Add a new chart configuration
@@ -165,7 +173,8 @@ if uploaded_file:
             "x_variable": None,
             "y_variable": None,
             "hue_variable": None,
-            "color_palette": "Default"
+            "color_palette": "Default",
+            "font_size": 12,  # Default font size
         })
 
     # Display chart configurations
@@ -215,6 +224,16 @@ if uploaded_file:
                 key=f"color_palette_{i}"
             )
             chart_config["color_palette"] = color_palette
+
+            # Option to adjust font size
+            font_size = st.slider(
+                f"Font size for Chart {i + 1} (Default: 12):",
+                min_value=8,
+                max_value=24,
+                value=12,
+                key=f"font_size_{i}"
+            )
+            chart_config["font_size"] = font_size
 
             # Button to remove this chart
             if st.button(f"Remove Chart {i + 1}"):
@@ -280,6 +299,28 @@ if uploaded_file:
                     color_discrete_sequence=color_palette,
                     title=f"Stacked Vertical Bar Chart of {chart_config['x_variable']} and {chart_config['hue_variable']}"
                 )
+            elif chart_config["type"] == "Simple Horizontal Bar Chart":
+                data = df[df['Idade'] < 120][chart_config["x_variable"]].value_counts().reset_index()
+                data.columns = [chart_config["x_variable"], "count"]
+                fig = px.bar(
+                    data,
+                    x="count",
+                    y=chart_config["x_variable"],
+                    orientation="h",
+                    title=f"Simple Horizontal Bar Chart of {chart_config['x_variable']}"
+                )
+            elif chart_config["type"] == "Simple Vertical Bar Chart":
+                data = df[df['Idade'] < 120][chart_config["x_variable"]].value_counts().reset_index()
+                data.columns = [chart_config["x_variable"], "count"]
+                fig = px.bar(
+                    data,
+                    x=chart_config["x_variable"],
+                    y="count",
+                    title=f"Simple Vertical Bar Chart of {chart_config['x_variable']}"
+                )
+
+            # Update font size
+            fig.update_layout(font=dict(size=chart_config["font_size"]))
 
             # Display the chart
             st.plotly_chart(fig, use_container_width=True)
