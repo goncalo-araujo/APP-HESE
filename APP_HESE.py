@@ -22,7 +22,6 @@ uploaded_file =  st.file_uploader("Upload a CSV file", type=["csv"], )
 
 if uploaded_file:
 # Read the uploaded file
-if uploaded_file is not None:
     # Detect the delimiter using the csv module
     sample = uploaded_file.read(1024).decode('utf-8')  # Read a sample and decode as UTF-8
     uploaded_file.seek(0)  # Reset the file pointer to the beginning after reading the sample
