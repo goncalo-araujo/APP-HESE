@@ -34,6 +34,9 @@ if uploaded_file:
     df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
+    df['1º Ajudante'] = df['1º Ajudante'].str.title()
+    df['Diagnóstico'] = df['Diagnóstico'].str.title()
+    df['Cirurgia'] = df['Cirurgia'].str.title()
     df['Proveniência'] = df['Proveniência'].apply(correct_electiva)
     df_certificado = pd.concat([df['Data da Cirurgia'], 
                          df['Nº Processo'],
@@ -158,7 +161,7 @@ if uploaded_file:
         "Simple Horizontal Bar Chart",
         "Simple Vertical Bar Chart",
     ]
-    variables = ["Idade", "Sexo", "Localização Anatómica", "Proveniência", "ASA Score", "Via de Acesso", "1º Ajudante"]
+    variables = ["Idade", "Sexo", "Localização Anatómica", "Proveniência", "ASA Score", "Via de Acesso", "1º Ajudante", "Diagnóstico", "Cirurgia"]
     color_palettes = {
         "Default": None,
         "Viridis": px.colors.sequential.Viridis,
