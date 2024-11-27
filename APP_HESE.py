@@ -20,6 +20,10 @@ uploaded_file =  st.file_uploader("Upload an Excel file")
 # In[2]:
 
 
+def correct_electiva(prov_str):
+    if "Eletiva" in prov_str:
+        return "Electiva"
+
 if uploaded_file:
 # Read the uploaded file and add certification formats
 
@@ -28,6 +32,7 @@ if uploaded_file:
     df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
+    df['Proveniência'] = df['Proveniência'].apply(correct_electiva)
     df_certificado = pd.concat([df['Data da Cirurgia'], 
                          df['Nº Processo'],
                          df['ID do doente'],
