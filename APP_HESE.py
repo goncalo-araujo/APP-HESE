@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[2]:
 
 
 import streamlit as st
@@ -13,11 +13,11 @@ st.title("Surgeries Data Visualization App")
 st.write("Upload your surgeries CSV file, format the data, and visualize key insights.")
 
 # File upload
-uploaded_file =  st.file_uploader("Upload an Excel file")
-#uploaded_file = r"C:\Users\GRA\Downloads\BASE DE DADOS JOANA BOLOTA.25.11 copy.xlsm"
+#uploaded_file =  #st.file_uploader("Upload an Excel file")
+uploaded_file = r"C:\Users\GRA\Downloads\BASE DE DADOS JOANA BOLOTA.25.11 copy.xlsm"
 
 
-# In[67]:
+# In[4]:
 
 
 def correct_electiva(prov_str):
@@ -38,7 +38,7 @@ if uploaded_file:
     df['Diagnóstico'] = df['Diagnóstico'].str.title()
     df['Cirurgia'] = df['Cirurgia'].str.title()
     df['Proveniência'] = df['Proveniência'].astype('str').apply(correct_electiva)
-    df['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], dayfirst=True, errors='coerce')
+    df['Data da Cirurgia'] = pd.to_datetime(df['Data da Cirurgia'], dayfirst=True, errors='coerce')
     df = df.dropna(subset=['Data da Cirurgia'])
 
     df_certificado = pd.concat([df['Data da Cirurgia'], 
@@ -50,7 +50,7 @@ if uploaded_file:
                          df['Localização Anatómica']], axis=1)
 
 
-# In[68]:
+# In[ ]:
 
 
 
@@ -132,7 +132,7 @@ if uploaded_file:
             )
 
 
-# In[69]:
+# In[ ]:
 
 
 st.title('Análise de dados')
@@ -140,7 +140,7 @@ st.write('Aqui podes selecionar gráficos com base nos teus dados')
 st.write('---')
 
 
-# In[71]:
+# In[ ]:
 
 
 import plotly.express as px
