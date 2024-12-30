@@ -14,10 +14,10 @@ st.write("Upload your surgeries CSV file, format the data, and visualize key ins
 
 # File upload
 uploaded_file =  st.file_uploader("Upload an Excel file")
+#uploaded_file = r"C:\Users\GRA\Downloads\BASE DE DADOS JOANA BOLOTA.25.11 copy.xlsm"
 
 
-
-# In[2]:
+# In[67]:
 
 
 def correct_electiva(prov_str):
@@ -37,7 +37,10 @@ if uploaded_file:
     df['1º Ajudante'] = df['1º Ajudante'].str.title()
     df['Diagnóstico'] = df['Diagnóstico'].str.title()
     df['Cirurgia'] = df['Cirurgia'].str.title()
-    df['Proveniência'] = df['Proveniência'].apply(correct_electiva)
+    df['Proveniência'] = df['Proveniência'].astype('str').apply(correct_electiva)
+    df['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], dayfirst=True, errors='coerce')
+    df = df.dropna(subset=['Data da Cirurgia'])
+
     df_certificado = pd.concat([df['Data da Cirurgia'], 
                          df['Nº Processo'],
                          df['ID do doente'],
@@ -47,7 +50,8 @@ if uploaded_file:
                          df['Localização Anatómica']], axis=1)
 
 
-# In[16]:
+# In[68]:
+
 
 
 from io import StringIO
@@ -71,7 +75,7 @@ if uploaded_file:
     st.write('---')
 
     # Ensure 'Data da Cirurgia' is in datetime format
-    df_certificado['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], errors='coerce')
+   # df_certificado['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], errors='coerce')
     
     # Assuming df_certificado['Data da Cirurgia'] is already a datetime column
     # Create a date range input widget in Streamlit
@@ -128,7 +132,7 @@ if uploaded_file:
             )
 
 
-# In[18]:
+# In[69]:
 
 
 st.title('Análise de dados')
@@ -136,7 +140,16 @@ st.write('Aqui podes selecionar gráficos com base nos teus dados')
 st.write('---')
 
 
-# In[ ]:
+# In[39]:
+
+
+# Identify non-datetime entries
+non_datetime_entries = df[~pd.to_datetime(df['Data da Cirurgia'], errors='coerce').notna()]
+
+non_datetime_entries['Data da Cirurgia'].dropna()
+
+
+# In[71]:
 
 
 import plotly.express as px
