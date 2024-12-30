@@ -13,7 +13,7 @@ st.title("Surgeries Data Visualization App")
 st.write("Upload your surgeries CSV file, format the data, and visualize key insights.")
 
 # File upload
-uploaded_file =  #st.file_uploader("Upload an Excel file")
+uploaded_file =  st.file_uploader("Upload an Excel file")
 #uploaded_file = r"C:\Users\GRA\Downloads\BASE DE DADOS JOANA BOLOTA.25.11 copy.xlsm"
 
 
@@ -30,10 +30,10 @@ if uploaded_file:
 # Read the uploaded file and add certification formats
 
     # Load the CSV using the detected delimiter and UTF-8 encoding
-    df = pd.read_excel(uploaded_file)   
+    df = pd.read_excel(uploaded_file)
     df['Initials'] = df['Nome'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
     df['Sexo_inititals'] = df['Sexo'].astype('str').apply(lambda x: ''.join([word[0] for word in x.split()]))
-    df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals'] 
+    df['ID do doente'] = df['Initials'] + ', ' + df['Idade'].astype('str') + ', ' + df['Sexo_inititals']
     df['1º Ajudante'] = df['1º Ajudante'].str.title()
     df['Diagnóstico'] = df['Diagnóstico'].str.title()
     df['Cirurgia'] = df['Cirurgia'].str.title()
@@ -41,10 +41,10 @@ if uploaded_file:
     df['Data da Cirurgia'] = pd.to_datetime(df['Data da Cirurgia'], dayfirst=True, errors='coerce')
     df = df.dropna(subset=['Data da Cirurgia'])
 
-    df_certificado = pd.concat([df['Data da Cirurgia'], 
+    df_certificado = pd.concat([df['Data da Cirurgia'],
                          df['Nº Processo'],
                          df['ID do doente'],
-                         df['1º Ajudante'], 
+                         df['1º Ajudante'],
                          df['Diagnóstico'],
                          df['Cirurgia'],
                          df['Localização Anatómica']], axis=1)
@@ -60,7 +60,7 @@ from io import StringIO
 def reformat_date(date_str, selected_years):
     # Split the date into components
     year, month, day = date_str.split('-')
-    
+
     # Check if the year is not in the selected years, then correct the date format
     if int(year) not in selected_years:  # Only correct if the year is not in selected_years
         fixed_day = year[-2:]  # Last two digits of the original year are the actual day
@@ -76,36 +76,36 @@ if uploaded_file:
 
     # Ensure 'Data da Cirurgia' is in datetime format
    # df_certificado['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], errors='coerce')
-    
+
     # Assuming df_certificado['Data da Cirurgia'] is already a datetime column
     # Create a date range input widget in Streamlit
     start_date, end_date = st.date_input(
         "Seleccione o intervalo de datas:",
         [df_certificado['Data da Cirurgia'].min(), df_certificado['Data da Cirurgia'].max()]
     )
-    
+
     # Filter the DataFrame by the selected date range
     filtered_df_certificado = df_certificado[
-        (df_certificado['Data da Cirurgia'] >= pd.to_datetime(start_date)) & 
+        (df_certificado['Data da Cirurgia'] >= pd.to_datetime(start_date)) &
         (df_certificado['Data da Cirurgia'] <= pd.to_datetime(end_date))
     ]
 
     # Filter the DataFrame by the selected date range
     filtered_df = df[
-        (df['Data da Cirurgia'] >= pd.to_datetime(start_date)) & 
+        (df['Data da Cirurgia'] >= pd.to_datetime(start_date)) &
         (df['Data da Cirurgia'] <= pd.to_datetime(end_date))
     ]
-    
+
     # Display a section header
     st.write('Certificação (Conferir):')
-    
+
     # Display the filtered dataframe
     st.dataframe(filtered_df_certificado.sort_values(['Localização Anatómica', 'Data da Cirurgia']))
 
 
     # Download button for each Localização Anatómica divided into columns
     unique_localizations = df_certificado['Localização Anatómica'].unique()
-    
+
     # Set the number of columns for buttons (e.g., 3)
     num_columns = 3
     cols = st.columns(num_columns)
@@ -259,10 +259,10 @@ if uploaded_file:
     for chart_config in st.session_state.charts:
         if chart_config["type"] and chart_config["x_variable"]:
             st.write(f"**Chart: {chart_config['type']}**")
-        
+
             # Get the selected color palette
             color_palette = color_palettes[chart_config["color_palette"]]
-        
+
             # Generate the respective chart
             if chart_config["type"] == "Violin Plot":
                 fig = px.violin(
@@ -316,7 +316,7 @@ if uploaded_file:
                 # Initialize layer configuration for Sankey diagram
                 if f"sankey_layers_{chart_config['type']}" not in st.session_state:
                     st.session_state[f"sankey_layers_{chart_config['type']}"] = [None, None]  # Start with two layers
-                
+
                 # Display layers and allow adding/removing
                 st.write(f"**Layers for Sankey Diagram {chart_config['type']}**")
                 for layer_idx, layer_name in enumerate(st.session_state[f"sankey_layers_{chart_config['type']}"]):
@@ -331,18 +331,18 @@ if uploaded_file:
                         if st.button(f"Remove Layer {layer_idx + 1}", key=f"remove_layer_{chart_config['type']}_{layer_idx}"):
                             st.session_state[f"sankey_layers_{chart_config['type']}"].pop(layer_idx)
                             st.experimental_rerun()  # Refresh UI immediately after removal
-    
+
                 # Add a new layer button
                 if st.button(f"Add Layer to Sankey {chart_config['type']}"):
                     st.session_state[f"sankey_layers_{chart_config['type']}"].append(None)
-    
+
                 # Prepare Sankey data
                 layers = [layer for layer in st.session_state[f"sankey_layers_{chart_config['type']}"] if layer]
                 if len(layers) > 1:
                     sankey_data = filtered_df.groupby(layers).size().reset_index(name="count")
                     all_labels = list(set().union(*[sankey_data[layer].unique() for layer in layers]))
                     label_map = {label: idx for idx, label in enumerate(all_labels)}
-    
+
                     # Create source, target, and value mappings
                     sources = []
                     targets = []
@@ -352,7 +352,7 @@ if uploaded_file:
                             sources.append(label_map[row[layers[layer_idx]]])
                             targets.append(label_map[row[layers[layer_idx + 1]]])
                             values.append(row["count"])
-    
+
                     fig = go.Figure(
                         data=[
                             go.Sankey(
@@ -376,7 +376,7 @@ if uploaded_file:
                     )
                 else:
                     st.write("Add at least two layers to generate the Sankey diagram.")
-    
+
             # Update font size for labels, axes, and tickers
             fig.update_layout(
                 font=dict(size=chart_config["font_size"]),
@@ -385,7 +385,7 @@ if uploaded_file:
                 yaxis={"title": {"font": {"size": chart_config["font_size"]}}, "tickfont": {"size": chart_config["font_size"]}},
                 legend={"font": {"size": chart_config["font_size"]}},
             )
-    
+
             # Display the chart
             st.plotly_chart(fig, use_container_width=True)
 
@@ -433,7 +433,3 @@ if uploaded_file:
 
 
 # In[ ]:
-
-
-
-
