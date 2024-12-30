@@ -13,8 +13,8 @@ st.title("Surgeries Data Visualization App")
 st.write("Upload your surgeries CSV file, format the data, and visualize key insights.")
 
 # File upload
-#uploaded_file =  #st.file_uploader("Upload an Excel file")
-uploaded_file = r"C:\Users\GRA\Downloads\BASE DE DADOS JOANA BOLOTA.25.11 copy.xlsm"
+uploaded_file =  #st.file_uploader("Upload an Excel file")
+#uploaded_file = r"C:\Users\GRA\Downloads\BASE DE DADOS JOANA BOLOTA.25.11 copy.xlsm"
 
 
 # In[4]:
