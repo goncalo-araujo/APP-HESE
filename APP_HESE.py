@@ -89,11 +89,7 @@ if uploaded_file:
         (df_certificado['Data da Cirurgia'] <= pd.to_datetime(end_date))
     ]
 
-    # Filter the DataFrame by the selected date range
-    filtered_df = df[
-        (df['Data da Cirurgia'] >= pd.to_datetime(start_date)) &
-        (df['Data da Cirurgia'] <= pd.to_datetime(end_date))
-    ]
+
 
     # Display a section header
     st.write('Certificação (Conferir):')
