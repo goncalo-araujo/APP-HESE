@@ -37,7 +37,7 @@ if uploaded_file:
     df['Diagnóstico'] = df['Diagnóstico'].str.title()
     df['Cirurgia'] = df['Cirurgia'].str.title()
     df['Proveniência'] = df['Proveniência'].astype('str').apply(correct_electiva)
-    df['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], dayfirst=True, errors='coerce')
+    df['Data da Cirurgia'] = pd.to_datetime(df['Data da Cirurgia'], dayfirst=True, errors='coerce')
     df = df.dropna(subset=['Data da Cirurgia'])
 
     df['Data da Cirurgia'] = pd.to_datetime(df['Data da Cirurgia'], dayfirst=True, errors='coerce')
