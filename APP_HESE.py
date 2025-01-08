@@ -40,7 +40,6 @@ if uploaded_file:
     df['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], dayfirst=True, errors='coerce')
     df = df.dropna(subset=['Data da Cirurgia'])
 
-    df_certificado = pd.concat([df['Data da Cirurgia'], 
     df['Data da Cirurgia'] = pd.to_datetime(df['Data da Cirurgia'], dayfirst=True, errors='coerce')
     df = df.dropna(subset=['Data da Cirurgia'])
 
