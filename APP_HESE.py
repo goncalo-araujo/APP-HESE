@@ -135,11 +135,11 @@ st.write('Aqui podes selecionar gráficos com base nos teus dados')
 st.write('---')
 
 
-# In[39]:
+
 
 
 # Identify non-datetime entries
-non_datetime_entries = df[~pd.to_datetime(df['Data da Cirurgia'], errors='coerce').notna()]
+non_datetime_entries = df[pd.to_datetime(df['Data da Cirurgia'], errors='coerce').notna()]
 
 non_datetime_entries['Data da Cirurgia'].dropna()
 
