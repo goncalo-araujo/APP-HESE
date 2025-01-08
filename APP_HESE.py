@@ -37,17 +37,14 @@ if uploaded_file:
     df['Diagnóstico'] = df['Diagnóstico'].str.title()
     df['Cirurgia'] = df['Cirurgia'].str.title()
     df['Proveniência'] = df['Proveniência'].astype('str').apply(correct_electiva)
-<<<<<<< HEAD
     df['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], dayfirst=True, errors='coerce')
     df = df.dropna(subset=['Data da Cirurgia'])
 
     df_certificado = pd.concat([df['Data da Cirurgia'], 
-=======
     df['Data da Cirurgia'] = pd.to_datetime(df['Data da Cirurgia'], dayfirst=True, errors='coerce')
     df = df.dropna(subset=['Data da Cirurgia'])
 
     df_certificado = pd.concat([df['Data da Cirurgia'],
->>>>>>> 01db01435c8b35b42017d95ad3277d458054d6fd
                          df['Nº Processo'],
                          df['ID do doente'],
                          df['1º Ajudante'],
@@ -55,12 +52,6 @@ if uploaded_file:
                          df['Cirurgia'],
                          df['Localização Anatómica']], axis=1)
 
-
-<<<<<<< HEAD
-# In[68]:
-=======
-# In[ ]:
->>>>>>> 01db01435c8b35b42017d95ad3277d458054d6fd
 
 
 
@@ -86,11 +77,6 @@ if uploaded_file:
 
     # Ensure 'Data da Cirurgia' is in datetime format
    # df_certificado['Data da Cirurgia'] = pd.to_datetime(df_certificado['Data da Cirurgia'], errors='coerce')
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 01db01435c8b35b42017d95ad3277d458054d6fd
     # Assuming df_certificado['Data da Cirurgia'] is already a datetime column
     # Create a date range input widget in Streamlit
     start_date, end_date = st.date_input(
@@ -146,11 +132,7 @@ if uploaded_file:
             )
 
 
-<<<<<<< HEAD
-# In[69]:
-=======
-# In[ ]:
->>>>>>> 01db01435c8b35b42017d95ad3277d458054d6fd
+
 
 
 st.title('Análise de dados')
@@ -165,9 +147,6 @@ st.write('---')
 non_datetime_entries = df[~pd.to_datetime(df['Data da Cirurgia'], errors='coerce').notna()]
 
 non_datetime_entries['Data da Cirurgia'].dropna()
-
-
-# In[71]:
 
 
 import plotly.express as px
@@ -417,46 +396,4 @@ if uploaded_file:
             st.plotly_chart(fig, use_container_width=True)
 
 
-# In[ ]:
 
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-#!streamlit run APP_HESE.py --server.headless true
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
