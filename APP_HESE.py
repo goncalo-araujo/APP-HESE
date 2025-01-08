@@ -17,11 +17,6 @@ uploaded_file =  st.file_uploader("Upload an Excel file")
 #uploaded_file = r"C:\Users\GRA\Downloads\BASE DE DADOS JOANA BOLOTA.25.11 copy.xlsm"
 
 
-<<<<<<< HEAD
-# In[67]:
-=======
-# In[4]:
->>>>>>> 01db01435c8b35b42017d95ad3277d458054d6fd
 
 
 def correct_electiva(prov_str):
