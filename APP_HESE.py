@@ -138,12 +138,6 @@ st.write('---')
 
 
 
-# Identify non-datetime entries
-non_datetime_entries = df_certificado[pd.to_datetime(df_certificado['Data da Cirurgia'], errors='coerce').notna()]
-
-non_datetime_entries['Data da Cirurgia'].dropna()
-
-
 import plotly.express as px
 import plotly.graph_objects as go
 
